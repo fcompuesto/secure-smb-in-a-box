@@ -1,0 +1,20 @@
+# Secrets and keys
+*.key
+*.pem
+*.pfx
+*.kdbx
+.env
+*.ovpn
+
+# Raw configs and exports (commit only sanitized copies under configs/)
+*.raw.xml
+*.bak
+
+# Evidence containing unredacted data
+docs/evidence/_raw/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

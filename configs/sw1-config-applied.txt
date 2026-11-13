@@ -1,0 +1,58 @@
+! Applied to SW1 (Cisco 2960-X, IOS 15.2(2)E3)
+! Safety net used first: reload in 10   (cancelled / confirmed none pending with: show reload)
+
+vlan 10
+ name MGMT
+vlan 20
+ name SERVERS
+vlan 30
+ name CLIENTS
+vlan 40
+ name LAB-ISOLATED
+vlan 50
+ name HOME-IOT-GUEST
+vlan 99
+ name BLACKHOLE
+!
+interface GigabitEthernet1/0/23
+ description TRUNK-to-PVE2-nic2
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,50
+ switchport trunk native vlan 99
+ switchport nonegotiate
+ spanning-tree portfast trunk
+ no shutdown
+!
+interface GigabitEthernet1/0/2
+ description iDRAC-VLAN10
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet1/0/10
+ description TEST-LAPTOP-VLAN30
+ switchport mode access
+ switchport access vlan 30
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface range GigabitEthernet1/0/11 - 12
+ description LAB-VLAN40
+ switchport mode access
+ switchport access vlan 40
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface range GigabitEthernet1/0/3 - 9 , GigabitEthernet1/0/13 - 19 , GigabitEthernet1/0/21 - 22 , GigabitEthernet1/0/25 - 28
+ description UNUSED
+ switchport mode access
+ switchport access vlan 99
+ shutdown
+!
+! Saved with: write memory
+! NOT yet applied (see docs/findings.md):
+!   vtp mode transparent
+!   no vstack
+!   no ip http server
+!   no ip http secure-server

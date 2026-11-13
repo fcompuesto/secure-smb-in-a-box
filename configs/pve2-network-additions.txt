@@ -1,0 +1,25 @@
+# Added to /etc/network/interfaces on pve2 (vmbr0 unchanged)
+# Applied with: ifreload -a
+# Backup before editing: cp /etc/network/interfaces /root/interfaces.bak
+
+auto vmbr1
+iface vmbr1 inet manual
+        bridge-ports nic2
+        bridge-stp off
+        bridge-fd 0
+        bridge-vlan-aware yes
+        bridge-vids 10 20 30 40 50
+#Trunk to 2960X
+
+# Added 2026-10: host presence on the management VLAN (no gateway yet, so it
+# only reaches OPNsense at 10.10.10.1 and VLAN 10 devices)
+auto vmbr1.10
+iface vmbr1.10 inet static
+        address 10.10.10.5/24
+#Proxmox mgmt on VLAN 10
+
+# Cutover done 2026-10-27 (configs/pve2-cutover.sh): vmbr1.10 now has
+#   gateway 10.10.10.1
+# and vmbr0 is 'iface vmbr0 inet manual' (no address, no gateway) with:
+#   post-up sysctl -w net.ipv6.conf.vmbr0.disable_ipv6=1
+# /etc/hosts maps pve2 to 10.10.10.5; /etc/resolv.conf uses 10.10.10.1.
